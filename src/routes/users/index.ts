@@ -1,16 +1,10 @@
 import { FastifyPluginAsyncJsonSchemaToTs } from '@fastify/type-provider-json-schema-to-ts';
 import { idParamSchema } from '../../utils/reusedSchemas';
-import {
-  createUserBodySchema,
-  changeUserBodySchema,
-  subscribeBodySchema,
-} from './schemas';
+import { createUserBodySchema, changeUserBodySchema, subscribeBodySchema } from './schemas';
 import type { UserEntity } from '../../utils/DB/entities/DBUsers';
 import { isUuid } from '../../utils/uuid';
 
-const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
-  fastify
-): Promise<void> => {
+const plugin: FastifyPluginAsyncJsonSchemaToTs = async (fastify): Promise<void> => {
   fastify.get('/', async function (request, reply): Promise<UserEntity[]> {
     return fastify.db.users.findMany();
   });
@@ -32,7 +26,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       }
 
       return user;
-    }
+    },
   );
 
   fastify.post(
@@ -44,7 +38,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
     },
     async function (request, reply): Promise<UserEntity> {
       return fastify.db.users.create(request.body);
-    }
+    },
   );
 
   fastify.delete(
@@ -75,9 +69,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       for (const subscriber of subscribers) {
         const newSubscriberData = {
           ...subscriber,
-          subscribedToUserIds: subscriber.subscribedToUserIds.filter(
-            (userId) => userId !== id
-          ),
+          subscribedToUserIds: subscriber.subscribedToUserIds.filter((userId) => userId !== id),
         };
 
         await fastify.db.users.change(subscriber.id, newSubscriberData);
@@ -104,7 +96,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       await fastify.db.users.delete(id);
 
       return user;
-    }
+    },
   );
 
   fastify.post(
@@ -147,7 +139,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       await fastify.db.users.change(userId, subscribedUser);
 
       return user;
-    }
+    },
   );
 
   fastify.post(
@@ -188,14 +180,12 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
         throw fastify.httpErrors.badRequest();
       }
 
-      user.subscribedToUserIds = user.subscribedToUserIds.filter(
-        (subscribedUserId) => subscribedUserId !== id
-      );
+      user.subscribedToUserIds = user.subscribedToUserIds.filter((subscribedUserId) => subscribedUserId !== id);
 
       await fastify.db.users.change(userId, user);
 
       return user;
-    }
+    },
   );
 
   fastify.patch(
@@ -220,7 +210,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       }
 
       return fastify.db.users.change(id, request.body);
-    }
+    },
   );
 };
 
